@@ -22,7 +22,9 @@ Whenever a new change is pushed to the GitHub repository, Jenkins rebuilds and r
 *(Flask app running on port **5000**) — showing **real-time weather details** based on the city name entered by the user.*
 
 ---
+![jenkins](images/pune.png)
 
+![jenkins](images/pune2.png)
 ## 🌤️ Project Overview
 
 This Flask application allows users to:
@@ -49,7 +51,7 @@ This Flask application allows users to:
 | **7️⃣ Access App** | Access live weather web app via browser. | Web Browser |
 
 ---
-
+![jenkins](images/j3.png)
 # 🔧 Jenkins Job — Step-by-Step Setup (Pipeline from SCM)
 
 Follow these steps to create your **Jenkins Pipeline Job** for the Flask Weather App deployment.
@@ -62,7 +64,7 @@ Follow these steps to create your **Jenkins Pipeline Job** for the Flask Weather
 - Enter **Job Name:** `flask-weather-pipeline-deploy`
 - Select **Pipeline**
 - Click **OK**
-
+![jenkins](images/j2.png)
 ---
 
 ## 📝 2️⃣ General Configuration (Optional)
