@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SSH_CRED    = 'node-cred'                                  // Jenkins SSH Credential ID
-        SERVER_IP   = '172.31.2.16'                                // Your EC2 Instance IP (can also use public IP)
+        SERVER_IP   = '16.16.99.185'                                // Your EC2 Instance IP (can also use public IP)
         REMOTE_USER = 'ubuntu'                                     // EC2 username
         APP_DIR     = '/home/ubuntu/flask-weather-app'             // App directory on EC2
         REPO_URL    = 'https://github.com/Shivamgarud8/weather-jenkins-python-pipeline.git'
