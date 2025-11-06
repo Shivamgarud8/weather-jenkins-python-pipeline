@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         EC2_IP = '16.16.99.185'            // Your EC2 public IP
-        SSH_CRED = 'ubuntu'                // Jenkins credential ID for EC2 SSH key
+        SSH_CRED = 'node-cred'                // Jenkins credential ID for EC2 SSH key
         APP_DIR = '/home/ubuntu/weather-app'
     }
 
