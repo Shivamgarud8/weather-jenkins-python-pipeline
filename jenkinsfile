@@ -2,59 +2,43 @@ pipeline {
     agent any
 
     environment {
-        SSH_CRED    = 'node-cred'                                  // Jenkins SSH Credential ID
-        SERVER_IP   = '16.16.99.185'                               // EC2 public IP
-        REMOTE_USER = 'ubuntu'                                     // EC2 username
-        APP_DIR     = '/home/ubuntu/flask-weather-app'             // App directory on EC2
-        REPO_URL    = 'https://github.com/Shivamgarud8/weather-jenkins-python-pipeline.git'
-        BRANCH      = 'main'
+        SERVER_IP      = '16.16.99.185'               // your EC2 public IP
+        SSH_CREDENTIAL = 'weather-key'                // your Jenkins SSH key ID
+        REPO_URL       = 'https://github.com/Shivamgarud8/weather-jenkins-python-pipeline.git'
+        BRANCH         = 'main'
+        REMOTE_USER    = 'ubuntu'
+        APP_DIR        = '/home/ubuntu/weather-app'
     }
 
     stages {
 
         stage('Clone Repository') {
             steps {
-                echo "📥 Cloning repository from GitHub..."
                 git branch: "${BRANCH}", url: "${REPO_URL}"
             }
         }
 
-        stage('Deploy Files to EC2') {
+        stage('Deploy to EC2') {
             steps {
-                echo "📤 Transferring app files to EC2..."
-                sshagent(credentials: ["${SSH_CRED}"]) {
+                sshagent (credentials: ["${SSH_CREDENTIAL}"]) {
                     sh '''
+                        echo "🔧 Deploying Flask Weather App to EC2..."
+
+                        # Create app directory on EC2
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${SERVER_IP} "mkdir -p ${APP_DIR}"
 
-                        # Copy only necessary files (no static folder error)
+                        # Copy necessary files
                         scp -o StrictHostKeyChecking=no -r app.py requirements.txt templates ${REMOTE_USER}@${SERVER_IP}:${APP_DIR}/
-                    '''
-                }
-            }
-        }
 
-        stage('Setup Python Environment & Run Flask App') {
-            steps {
-                echo "⚙️ Setting up Python and running the app..."
-                sshagent(credentials: ["${SSH_CRED}"]) {
-                    sh '''
+                        # Setup environment and start app
                         ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${SERVER_IP} "
-                            sudo apt update -y &&
-                            sudo apt install -y python3-venv python3-pip curl &&
-                            cd ${APP_DIR} &&
-                            python3 -m venv venv &&
-                            source venv/bin/activate &&
-                            pip install --upgrade pip &&
-                            pip install -r requirements.txt &&
-
-                            # Stop any old running Flask app
-                            pkill -f 'python3 app.py' || true &&
-
-                            # Run the app in background
+                            cd ${APP_DIR} && \
+                            sudo apt update -y && \
+                            sudo apt install -y python3-pip && \
+                            pip install --upgrade pip && \
+                            pip install -r requirements.txt && \
+                            sudo fuser -k 5000/tcp || true && \
                             nohup python3 app.py > app.log 2>&1 &
-
-                            sleep 5
-                            echo '✅ Flask app is running on port 5000'
                         "
                     '''
                 }
@@ -65,11 +49,11 @@ pipeline {
             steps {
                 echo "🔍 Checking if Flask app is accessible..."
                 script {
-                    def result = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://${SERVER_IP}:5000", returnStdout: true).trim()
-                    if (result == '200') {
-                        echo "✅ Health Check Passed: Flask app is reachable at http://${SERVER_IP}:5000"
-                    } else {
-                        error "❌ Health Check Failed: App not responding (HTTP ${result})"
+                    // Wait 5 seconds to ensure Flask boots up
+                    sleep 5
+                    def response = sh(script: "curl -s -o /dev/null -w %{http_code} http://${SERVER_IP}:5000", returnStdout: true).trim()
+                    if (response != '200') {
+                        error("Flask app not responding. HTTP code: ${response}")
                     }
                 }
             }
@@ -77,20 +61,18 @@ pipeline {
 
         stage('Show App URL') {
             steps {
-                echo "🌍 Your Flask app has been successfully deployed!"
-                echo "-------------------------------------------------------"
-                echo "🌐 Access it here: http://${SERVER_IP}:5000"
-                echo "-------------------------------------------------------"
+                echo "✅ Flask Weather App deployed successfully!"
+                echo "🌐 Visit your app: http://${SERVER_IP}:5000"
             }
         }
     }
 
     post {
-        success {
-            echo "🎉 Deployment Successful! Visit: http://${SERVER_IP}:5000"
-        }
         failure {
             echo "❌ Deployment Failed! Please check Jenkins logs for errors."
+        }
+        success {
+            echo "🎉 Deployment completed successfully! Weather App is live."
         }
     }
 }
