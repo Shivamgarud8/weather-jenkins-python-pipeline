@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SERVER_IP      = '16.16.99.185'               // your EC2 public IP
-        SSH_CREDENTIAL = 'weather-key'                // your Jenkins SSH key ID
+        SSH_CREDENTIAL = 'node-cred'                // your Jenkins SSH key ID
         REPO_URL       = 'https://github.com/Shivamgarud8/weather-jenkins-python-pipeline.git'
         BRANCH         = 'main'
         REMOTE_USER    = 'ubuntu'
