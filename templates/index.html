@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather App</title>
+  <style>
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      text-align: center; 
+      margin-top: 120px;
+      color: #fff;
+    }
+    h1 { font-size: 2.5em; margin-bottom: 10px; }
+    form { margin-top: 30px; }
+    input[type="text"] { 
+      padding: 12px; 
+      width: 280px; 
+      border: none; 
+      border-radius: 25px;
+      text-align: center;
+      font-size: 16px;
+    }
+    input[type="submit"] { 
+      padding: 12px 25px; 
+      background: #004aad; 
+      color: white; 
+      border: none; 
+      border-radius: 25px; 
+      font-size: 16px; 
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    input[type="submit"]:hover { background: #002b80; }
+  </style>
+</head>
+<body>
+  <h1>🌤️ Weather Finder</h1>
+  <p>Enter your city name to get the current weather details.</p>
+  <form method="POST" action="/weather">
+    <input type="text" name="city" placeholder="Enter city name" required>
+    <input type="submit" value="Get Weather">
+  </form>
+</body>
+</html>
