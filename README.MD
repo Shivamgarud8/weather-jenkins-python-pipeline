@@ -2,6 +2,17 @@
 
 > ☁️ This project demonstrates a **fully automated CI/CD Pipeline** that clones, sets up, and deploys a **Flask-based Weather Web Application** on a **Linux server** — powered by **Jenkins** and **GitHub Webhooks**.  
 Whenever a new change is pushed to the GitHub repository, Jenkins rebuilds and redeploys the updated app automatically! 🚀
+## 🧰 Tech Stack & Tools
+
+![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
+![Flask](https://img.shields.io/badge/Flask-Web%20Framework-lightgrey?logo=flask)
+![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)
+![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)
+![Linux](https://img.shields.io/badge/Linux-Server-yellow?logo=linux)
+![PM2](https://img.shields.io/badge/PM2-Process%20Manager-brightgreen?logo=pm2)
+![HTML](https://img.shields.io/badge/Frontend-HTML%2FCSS-orange?logo=html5)
+![Pipeline](https://img.shields.io/badge/Automated%20Deployment-Enabled-success?logo=jenkins)
+![Port](https://img.shields.io/badge/Port-5000-blue)
 
 ---
 
