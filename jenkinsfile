@@ -1,0 +1,79 @@
+pipeline {
+    agent any
+
+    environment {
+        SSH_CRED    = 'node-cred'                                  // Jenkins SSH Credential ID
+        SERVER_IP   = '172.31.2.16'                                // Your EC2 Instance IP (can also use public IP)
+        REMOTE_USER = 'ubuntu'                                     // EC2 username
+        APP_DIR     = '/home/ubuntu/flask-weather-app'             // App directory on EC2
+        REPO_URL    = 'https://github.com/Shivamgarud8/weather-jenkins-python-pipeline.git'
+        BRANCH      = 'main'                                       // Branch name
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                echo "📥 Cloning repository from GitHub..."
+                git branch: "${BRANCH}", url: "${REPO_URL}"
+            }
+        }
+
+        stage('Deploy Files to EC2') {
+            steps {
+                echo "📤 Transferring files to EC2..."
+                sshagent(credentials: ["${SSH_CRED}"]) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${SERVER_IP} "mkdir -p ${APP_DIR}"
+
+                        scp -o StrictHostKeyChecking=no -r app.py requirements.txt templates static ${REMOTE_USER}@${SERVER_IP}:${APP_DIR}/
+                    '''
+                }
+            }
+        }
+
+        stage('Setup Python Environment & Run App') {
+            steps {
+                echo "⚙️ Setting up Python environment on EC2..."
+                sshagent(credentials: ["${SSH_CRED}"]) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${SERVER_IP} "
+                            sudo apt update -y &&
+                            sudo apt install -y python3-venv python3-pip &&
+                            cd ${APP_DIR} &&
+                            python3 -m venv venv &&
+                            source venv/bin/activate &&
+                            pip install --upgrade pip &&
+                            pip install -r requirements.txt &&
+                            # Kill any old Flask process
+                            pkill -f 'python3 app.py' || true &&
+                            nohup python3 app.py > app.log 2>&1 &
+                            sleep 5
+                            echo '✅ Flask Weather App deployed and started successfully!'
+                        "
+                    '''
+                }
+            }
+        }
+
+        stage('Show App URL') {
+            steps {
+                echo "🌍 Your Flask app is now running!"
+                echo "-------------------------------------------------------"
+                echo "🌐 Visit your app in browser:"
+                echo "👉 http://${SERVER_IP}:5000"
+                echo "-------------------------------------------------------"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Deployment completed successfully!'
+            echo "🎉 Access your Flask app here: http://${SERVER_IP}:5000"
+        }
+        failure {
+            echo '❌ Deployment failed. Please check Jenkins logs for details.'
+        }
+    }
+}
+
