@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SSH_CRED = 'jenkins-python'              // ✅ Your Jenkins SSH key ID
-        SERVER_IP = '51.21.160.231'           // ✅ EC2 public IP
+        SERVER_IP = '51.20.64.167'           // ✅ EC2 public IP
         REMOTE_USER = 'ubuntu'               // ✅ Default EC2 Ubuntu user
         APP_DIR = '/home/ubuntu/flask-weather-app'
         PYTHON_ENV = '/home/ubuntu/flask-weather-app/venv'
