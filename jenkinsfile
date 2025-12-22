@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         EC2_USER = "ubuntu"
-        EC2_IP = "13.49.230.50"
+        EC2_IP = "13.51.175.12"
         APP_DIR = "/home/ubuntu/flask-weather-app"
         CREDENTIAL_ID = "jenkins-weather"
         PORT = "5000"
